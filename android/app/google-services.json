@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "411735008540",
+    "firebase_url": "https://elite-chat-9010b.firebaseio.com",
+    "project_id": "elite-chat-9010b",
+    "storage_bucket": "elite-chat-9010b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:411735008540:android:ce28e71f8ae63c2c",
+        "android_client_info": {
+          "package_name": "co.donet.elite_chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "411735008540-2gvqotcop5if41urlh4c1qe62lh26abo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANyxcm5NTKZzWW6u0hDenF8gMhY719ujo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "411735008540-2gvqotcop5if41urlh4c1qe62lh26abo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
