@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flash_chat/widgets/button_widget.dart';
 import 'package:flash_chat/constants.dart';
-import 'chat_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:flash_chat/utils.dart';
+import 'package:flash_chat/user.dart';
+import 'user_screen.dart';
 
 class RegistrationScreen extends StatefulWidget {
-  static const String id = '/register';
+  static const String id = 'register';
 
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
@@ -14,6 +17,7 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _auth = FirebaseAuth.instance;
+  final firestore = Firestore.instance;
   bool showSpinner = false;
   String email;
   String password;
@@ -30,11 +34,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Hero(
-                tag: 'logo',
-                child: Container(
-                  height: 200.0,
-                  child: Image.asset('images/logo.png'),
+              Flexible(
+                child: Hero(
+                  tag: 'logo',
+                  child: Container(
+                    height: 200.0,
+                    child: Image.asset('images/logo.png'),
+                  ),
                 ),
               ),
               SizedBox(
@@ -76,8 +82,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   try {
                     final user = await _auth.createUserWithEmailAndPassword(
                         email: email, password: password);
-                    if (user != null)
-                      Navigator.pushNamed(context, ChatScreen.id);
+                    if (user != null) {
+                      firestore.collection('users').add({
+                        'uid': user.uid,
+                      });
+                      Utils.saveUser(User(email: email, password: password));
+                      Navigator.pushNamed(context, UserScreen.id);
+                    }
                   } catch (e) {
                     print(e);
                   } finally {

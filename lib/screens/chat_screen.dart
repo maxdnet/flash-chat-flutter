@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flash_chat/widgets/bubble_message.dart';
 
 class ChatScreen extends StatefulWidget {
-  static const String id = '/chat';
+  static const String id = 'users/chat';
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
   TextEditingController _c;
+
   final _auth = FirebaseAuth.instance;
   final _fireStore = Firestore.instance;
   String userMessage;
@@ -29,7 +31,6 @@ class _ChatScreenState extends State<ChatScreen> {
       final user = await _auth.currentUser();
       if (user != null) {
         currentUser = user;
-        print(currentUser.email);
       }
     } catch (e) {
       print(e);
@@ -47,17 +48,21 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           );
         }
-        final messages = snapshot.data.documents;
+        final messages = snapshot.data.documents.reversed;
         List<BubbleMessage> bubbleWidgets = [];
         for (var message in messages) {
           CrossAxisAlignment crossAxis = CrossAxisAlignment.end;
           Color color = Colors.black87;
+          BorderRadius bradius = kBubbleMessageBorderRadiusUser;
+
           final messageText = message.data['text'].toString();
           final messageSender = message.data['sender'].toString();
+          final Timestamp messageTime = message.data['data'];
 
-          if (messageSender != currentUser.email) {
+          if (messageSender != currentUser.uid) {
             crossAxis = CrossAxisAlignment.start;
             color = Colors.purple;
+            bradius = kBubbleMessageBorderRadiusVisitor;
           }
 
           final bubbleWidget = BubbleMessage(
@@ -65,10 +70,13 @@ class _ChatScreenState extends State<ChatScreen> {
             messageSender: messageSender,
             crossAxisAlignement: crossAxis,
             bubbleColor: color,
+            bRadius: bradius,
+            messageData: messageTime.toDate(),
           );
           bubbleWidgets.add(bubbleWidget);
         }
         return ListView(
+          reverse: true,
           padding: EdgeInsets.all(10),
           children: bubbleWidgets,
         );
@@ -95,7 +103,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 Navigator.pop(context); //Implement logout functionality
               }),
         ],
-        title: Text('⚡️Chat'),
+        title: Text('⚡️Elite Chat'),
         //backgroundColor: Colors.lightBlueAccent,
       ),
       body: SafeArea(
@@ -124,8 +132,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   FlatButton(
                     onPressed: () {
                       if (userMessage != null) {
-                        _fireStore.collection('messagges').add(
-                            {'sender': currentUser.email, 'text': userMessage});
+                        _fireStore.collection('messagges').add({
+                          'sender': currentUser.uid,
+                          'text': userMessage,
+                          'data': DateTime.now()
+                        });
                         setState(() {
                           _c.clear();
                         });
@@ -142,41 +153,6 @@ class _ChatScreenState extends State<ChatScreen> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class BubbleMessage extends StatelessWidget {
-  final String messageText;
-  final String messageSender;
-  final CrossAxisAlignment crossAxisAlignement;
-  final Color bubbleColor;
-
-  BubbleMessage(
-      {this.messageSender,
-      this.messageText,
-      this.crossAxisAlignement,
-      this.bubbleColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: crossAxisAlignement,
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Material(
-            elevation: 5.0,
-            borderRadius: BorderRadius.circular(20),
-            color: bubbleColor,
-            child: Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Text(messageText),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
