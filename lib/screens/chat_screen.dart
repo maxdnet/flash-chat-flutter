@@ -1,11 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flash_chat/widgets/bubble_message.dart';
+import 'package:flash_chat/user.dart';
+import 'package:flash_chat/widgets/user_row_widget.dart';
 
 class ChatScreen extends StatefulWidget {
   static const String id = 'users/chat';
+  final User selectedUser;
+
+  ChatScreen({this.selectedUser});
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -15,31 +23,33 @@ class _ChatScreenState extends State<ChatScreen> {
 
   final _auth = FirebaseAuth.instance;
   final _fireStore = Firestore.instance;
+  String chatID;
+  String _firstLetter;
+  User selectedUser;
   String userMessage;
+
   FirebaseUser currentUser;
 
   @override
   void initState() {
     super.initState();
+    selectedUser = super.widget.selectedUser;
+    chatID = getChatID(selectedUser.idSelected, selectedUser.idCurrent);
+    _firstLetter = selectedUser.username.substring(0, 1);
     _c = TextEditingController();
-    getCurrentUser();
-    //listenToMessages();
   }
 
-  void getCurrentUser() async {
-    try {
-      final user = await _auth.currentUser();
-      if (user != null) {
-        currentUser = user;
-      }
-    } catch (e) {
-      print(e);
-    }
+  String getChatID(int n1, int n2) {
+    return (n1 < n2 ? '$n1' + '_' + '$n2' : '$n2' + '_' + '$n1');
+  }
+
+  Stream<QuerySnapshot> getSnapshots() {
+    return _fireStore.collection('/rooms/$chatID/messagges').snapshots();
   }
 
   StreamBuilder<QuerySnapshot> getMessages() {
     return StreamBuilder<QuerySnapshot>(
-      stream: _fireStore.collection('messagges').snapshots(),
+      stream: getSnapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(
@@ -55,11 +65,11 @@ class _ChatScreenState extends State<ChatScreen> {
           Color color = Colors.black87;
           BorderRadius bradius = kBubbleMessageBorderRadiusUser;
 
-          final messageText = message.data['text'].toString();
-          final messageSender = message.data['sender'].toString();
+          final messageText = message.data['message'].toString();
+          final messageSender = message.data['from'].toString();
           final Timestamp messageTime = message.data['data'];
 
-          if (messageSender != currentUser.uid) {
+          if (messageSender != selectedUser.uidCurrent) {
             crossAxis = CrossAxisAlignment.start;
             color = Colors.purple;
             bradius = kBubbleMessageBorderRadiusVisitor;
@@ -95,15 +105,16 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: null,
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () {
-                _auth.signOut();
-                Navigator.pop(context); //Implement logout functionality
-              }),
-        ],
-        title: Text('⚡️Elite Chat'),
+//        actions: <Widget>[
+//          IconButton(
+//              icon: Icon(Icons.close),
+//              onPressed: () {
+//                _auth.signOut();
+//                Navigator.pop(context); //Implement logout functionality
+//              }),
+//        ],
+        title: UserRowWidget(
+            firstLetter: _firstLetter, selectedUser: selectedUser),
         //backgroundColor: Colors.lightBlueAccent,
       ),
       body: SafeArea(
@@ -132,9 +143,9 @@ class _ChatScreenState extends State<ChatScreen> {
                   FlatButton(
                     onPressed: () {
                       if (userMessage != null) {
-                        _fireStore.collection('messagges').add({
-                          'sender': currentUser.uid,
-                          'text': userMessage,
+                        _fireStore.collection('/rooms/$chatID/messagges').add({
+                          'from': selectedUser.uidCurrent,
+                          'message': userMessage,
                           'data': DateTime.now()
                         });
                         setState(() {

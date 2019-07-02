@@ -12,15 +12,15 @@ void main() async {
 }
 
 class FlashChat extends StatelessWidget {
-  Widget startingwidget;
-  FlashChat(this.startingwidget);
+  final Widget startingWidget;
+  FlashChat(this.startingWidget);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
-      home: startingwidget,
+      home: startingWidget,
       routes: {
         WelcomeScreen.id: (context) => WelcomeScreen(),
         RegistrationScreen.id: (context) => RegistrationScreen(),
@@ -31,6 +31,25 @@ class FlashChat extends StatelessWidget {
     );
   }
 }
+
+//Route<dynamic> _getRoute(RouteSettings settings) {
+//  if (settings.name == ChatScreen.id) {
+//    return _buildRoute(
+//        settings,
+//        ChatScreen(
+//          selectedUser: settings.arguments,
+//        ));
+//  }
+//
+//  return null;
+//}
+//
+//MaterialPageRoute _buildRoute(RouteSettings settings, Widget builder) {
+//  return new MaterialPageRoute(
+//    settings: settings,
+//    builder: (ctx) => builder,
+//  );
+//}
 
 Future<Widget> getStartingWidget() async {
   var user = await Utils.getRegisteredUser();

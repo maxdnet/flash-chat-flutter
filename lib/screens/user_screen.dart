@@ -18,13 +18,16 @@ class UserScreen extends StatefulWidget {
 class _UserScreenState extends State<UserScreen> {
   final _auth = FirebaseAuth.instance;
   final _fireStore = Firestore.instance;
+  int currentUserID;
   FirebaseUser currentUser;
 
   @override
   void initState() {
     super.initState();
     var user = widget.user;
-    user.loginUser(context);
+
+    //vengo dalla Login o dalla registrazione
+    if (user != null) user.loginUser(context);
     getCurrentUser();
   }
 
@@ -32,7 +35,15 @@ class _UserScreenState extends State<UserScreen> {
     try {
       final user = await _auth.currentUser();
       if (user != null) {
-        currentUser = user;
+        setState(() {
+          currentUser = user;
+        });
+
+        _fireStore
+            .collection('users')
+            .where('uid', isEqualTo: currentUser.uid)
+            .snapshots()
+            .listen((data) => currentUserID = data.documents[0]['id']);
       }
     } catch (e) {
       print(e);
@@ -53,12 +64,14 @@ class _UserScreenState extends State<UserScreen> {
         final users = snapshot.data.documents.reversed;
         List<Widget> usersListWidget = [];
         for (var user in users) {
-          CrossAxisAlignment crossAxis = CrossAxisAlignment.stretch;
-          Color color = Colors.black87;
-          BorderRadius bradius = BorderRadius.all(Radius.circular(2));
+//          CrossAxisAlignment crossAxis = CrossAxisAlignment.stretch;
+//          Color color = Colors.black87;
+//          BorderRadius bradius = BorderRadius.all(Radius.circular(2));
 
-          final userName = user.data['user'].toString();
-          final userID = user.data['uid'].toString();
+//          final userName = user.data['user'].toString();
+//          final uID = user.data['uid'].toString();
+          final userID = user.data['id'];
+          if (userID == currentUserID) continue;
 //          final Timestamp messageTime = message.data['data'];
 
 //          if (messageSender != currentUser.uid) {
@@ -67,8 +80,12 @@ class _UserScreenState extends State<UserScreen> {
 //            bradius = kBubbleMessageBorderRadiusVisitor;
 //          }
 
-          final userListWidget =
-              UserListBubble(userName: userName, userID: userID);
+          final userListWidget = UserListBubble(
+            user: user,
+            uidCurrent: currentUser.uid,
+            idSelected: userID,
+            idCurrent: currentUserID,
+          );
           usersListWidget.add(userListWidget);
         }
 

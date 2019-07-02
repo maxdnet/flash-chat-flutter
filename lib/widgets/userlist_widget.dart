@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flash_chat/screens/chat_screen.dart';
+import 'package:flash_chat/user.dart';
+import 'package:flash_chat/widgets/user_row_widget.dart';
 
 class UserListBubble extends StatelessWidget {
-  final String userName;
-  final String userID;
-  String firstLetter;
+  final dynamic user;
+  final String uidCurrent;
+  final int idCurrent;
+  final int idSelected;
+  User selectedUser;
+  String _firstLetter;
+  String _username;
+  String _uid;
 
-  UserListBubble({
-    this.userName,
-    this.userID,
-  }) {
-    firstLetter = userName.substring(0, 1);
+  UserListBubble(
+      {this.user, this.uidCurrent, this.idSelected, this.idCurrent}) {
+    _uid = user.data['uid'];
+    _username = user.data['user'];
+    _firstLetter = _username.substring(0, 1);
+    selectedUser = User(
+        uidSelected: _uid,
+        username: _username,
+        uidCurrent: uidCurrent,
+        idCurrent: idCurrent,
+        idSelected: idSelected);
   }
 
   @override
@@ -19,32 +33,18 @@ class UserListBubble extends StatelessWidget {
         Material(
           elevation: 4,
           child: InkWell(
-            onTap: () {},
-            child: Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CircleAvatar(
-                    backgroundColor: Colors.amber,
-                    radius: 20,
-                    child: Text(
-                      firstLetter,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ), //Image(image: AssetImage('images/boss.png')),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    userName,
-                    style: TextStyle(fontSize: 18.0),
-                  ),
-                ),
-              ],
-            ),
+            onTap: () {
+//              Navigator.pushNamed(context, ChatScreen.id,
+//                  arguments: selectedUser);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChatScreen(
+                            selectedUser: selectedUser,
+                          )));
+            },
+            child: UserRowWidget(
+                firstLetter: _firstLetter, selectedUser: selectedUser),
           ),
         ),
       ],

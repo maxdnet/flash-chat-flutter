@@ -5,10 +5,22 @@ import 'utils.dart';
 final _auth = FirebaseAuth.instance;
 
 class User {
-  String email;
-  String password;
+  final String email;
+  final String password;
+  final String uidSelected;
+  final String uidCurrent;
+  final String username;
+  final int idSelected;
+  int idCurrent;
 
-  User({this.email, this.password});
+  User(
+      {this.email,
+      this.password,
+      this.uidSelected,
+      this.username,
+      this.uidCurrent,
+      this.idCurrent,
+      this.idSelected});
 
   void loginUserandNavigate(BuildContext context, String navigateTo) async {
     try {

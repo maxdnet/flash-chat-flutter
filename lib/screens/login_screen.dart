@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flash_chat/widgets/button_widget.dart';
 import 'package:flash_chat/constants.dart';
-import 'chat_screen.dart';
+import 'user_screen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:flash_chat/user.dart';
 import 'dart:io';
@@ -78,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   });
                   try {
                     User(email: email, password: password)
-                        .loginUserandNavigate(context, ChatScreen.id);
+                        .loginUserandNavigate(context, UserScreen.id);
                   } catch (e) {
                     print(e);
                   } finally {
