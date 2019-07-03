@@ -21,6 +21,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool showSpinner = false;
   String email;
   String password;
+  String userName;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +46,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
               SizedBox(
                 height: 48.0,
+              ),
+              TextField(
+                textAlign: TextAlign.center,
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (value) {
+                  //Do something with the user input.
+                  userName = value;
+                },
+                decoration:
+                    kInputTextDecoration.copyWith(hintText: 'Enter a username'),
+              ),
+              SizedBox(
+                height: 8.0,
               ),
               TextField(
                 textAlign: TextAlign.center,
@@ -85,6 +99,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     if (user != null) {
                       firestore.collection('users').add({
                         'uid': user.uid,
+                        'user': userName,
+                        'id': DateTime.now().millisecondsSinceEpoch
                       });
                       Utils.saveUser(User(email: email, password: password));
                       Navigator.pushNamed(context, UserScreen.id);

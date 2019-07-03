@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flash_chat/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flash_chat/user.dart';
@@ -64,21 +63,8 @@ class _UserScreenState extends State<UserScreen> {
         final users = snapshot.data.documents.reversed;
         List<Widget> usersListWidget = [];
         for (var user in users) {
-//          CrossAxisAlignment crossAxis = CrossAxisAlignment.stretch;
-//          Color color = Colors.black87;
-//          BorderRadius bradius = BorderRadius.all(Radius.circular(2));
-
-//          final userName = user.data['user'].toString();
-//          final uID = user.data['uid'].toString();
           final userID = user.data['id'];
           if (userID == currentUserID) continue;
-//          final Timestamp messageTime = message.data['data'];
-
-//          if (messageSender != currentUser.uid) {
-//            crossAxis = CrossAxisAlignment.start;
-//            color = Colors.purple;
-//            bradius = kBubbleMessageBorderRadiusVisitor;
-//          }
 
           final userListWidget = UserListBubble(
             user: user,

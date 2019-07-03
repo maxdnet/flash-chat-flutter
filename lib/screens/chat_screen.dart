@@ -61,27 +61,33 @@ class _ChatScreenState extends State<ChatScreen> {
         final messages = snapshot.data.documents.reversed;
         List<BubbleMessage> bubbleWidgets = [];
         for (var message in messages) {
+          MainAxisAlignment mainAxis = MainAxisAlignment.end;
           CrossAxisAlignment crossAxis = CrossAxisAlignment.end;
           Color color = Colors.black87;
           BorderRadius bradius = kBubbleMessageBorderRadiusUser;
+          IconData iconSend = Icons.check;
 
           final messageText = message.data['message'].toString();
           final messageSender = message.data['from'].toString();
           final Timestamp messageTime = message.data['data'];
 
           if (messageSender != selectedUser.uidCurrent) {
+            mainAxis = MainAxisAlignment.start;
             crossAxis = CrossAxisAlignment.start;
             color = Colors.purple;
             bradius = kBubbleMessageBorderRadiusVisitor;
+            iconSend = Icons.chevron_right;
           }
 
           final bubbleWidget = BubbleMessage(
             messageText: messageText,
             messageSender: messageSender,
-            crossAxisAlignement: crossAxis,
+            crossAxisAlignment: crossAxis,
+            mainAxisAlignment: mainAxis,
             bubbleColor: color,
             bRadius: bradius,
             messageData: messageTime.toDate(),
+            iconSent: iconSend,
           );
           bubbleWidgets.add(bubbleWidget);
         }
@@ -119,10 +125,9 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Expanded(
-              flex: 2,
               child: getMessages(),
             ),
             Container(

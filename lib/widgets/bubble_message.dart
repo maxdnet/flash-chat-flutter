@@ -5,23 +5,27 @@ class BubbleMessage extends StatelessWidget {
   final String messageText;
   final String messageSender;
   final DateTime messageData;
-  final CrossAxisAlignment crossAxisAlignement;
+  final MainAxisAlignment mainAxisAlignment;
+  final CrossAxisAlignment crossAxisAlignment;
   final Color bubbleColor;
   final BorderRadius bRadius;
+  final IconData iconSent;
 
   BubbleMessage(
       {this.messageSender,
       this.messageText,
-      this.crossAxisAlignement,
+      this.mainAxisAlignment,
+      this.crossAxisAlignment,
       this.bubbleColor,
       this.bRadius,
-      this.messageData});
+      this.messageData,
+      this.iconSent});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: crossAxisAlignement,
+      crossAxisAlignment: crossAxisAlignment,
       children: <Widget>[
         Padding(
           padding: EdgeInsets.all(8.0),
@@ -55,4 +59,55 @@ class BubbleMessage extends StatelessWidget {
       ],
     );
   }
+
+  //Questa è quella nuova che non me Wrappa il testo
+
+//  Widget build(BuildContext context) {
+//    return Row(
+//      mainAxisAlignment: crossAxisAlignement,
+//      //crossAxisAlignment: CrossAxisAlignment.center,
+//      children: <Widget>[
+//        Padding(
+//          padding: const EdgeInsets.all(8.0),
+//          child: Material(
+//            elevation: 5.0,
+//            borderRadius: bRadius,
+//            color: bubbleColor,
+//            child: Padding(
+//              padding: const EdgeInsets.all(8.0),
+//              child: Column(
+//                crossAxisAlignment: CrossAxisAlignment.end,
+//                children: <Widget>[
+//                  Text(
+//                    messageText,
+//                    style: TextStyle(fontSize: 15.0),
+//                  ),
+//                  Row(
+//                    children: <Widget>[
+//                      Text(
+//                        '${Utils.convertDataToTime(messageData)}',
+//                        style: TextStyle(
+//                          color: Colors.white54,
+//                          fontSize: 10.0,
+//                        ),
+//                        textAlign: TextAlign.right,
+//                      ),
+//                      SizedBox(
+//                        width: 3.0,
+//                      ),
+//                      Icon(
+//                        iconSent, //check
+//                        size: 13.0,
+//                        color: Colors.amberAccent,
+//                      ),
+//                    ],
+//                  ),
+//                ],
+//              ),
+//            ),
+//          ),
+//        )
+//      ],
+//    );
+//  }
 }
