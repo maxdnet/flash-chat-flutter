@@ -65,19 +65,30 @@ class _ChatScreenState extends State<ChatScreen> {
           CrossAxisAlignment crossAxis = CrossAxisAlignment.end;
           Color color = Colors.black87;
           BorderRadius bradius = kBubbleMessageBorderRadiusUser;
-          IconData iconSend = Icons.check;
+          IconData iconSend = Icons.chevron_right;
 
           final messageText = message.data['message'].toString();
           final messageSender = message.data['from'].toString();
           final Timestamp messageTime = message.data['data'];
-          final bool isNew = message.data['isnew'];
+          bool isNew = message.data['isNew'];
+
+          iconSend = (isNew == true) ? Icons.chevron_right : Icons.done_all;
 
           if (messageSender != selectedUser.uidCurrent) {
+            if (isNew == true) {
+              var docId = message.documentID;
+              _fireStore
+                  .collection('/rooms/$chatID/messagges')
+                  .document(docId)
+                  .setData({'isNew': false}, merge: true);
+              isNew = false;
+            }
+
             mainAxis = MainAxisAlignment.start;
             crossAxis = CrossAxisAlignment.start;
             color = Colors.purple;
             bradius = kBubbleMessageBorderRadiusVisitor;
-            iconSend = Icons.chevron_right;
+            iconSend = Icons.android;
           }
 
           final bubbleWidget = BubbleMessage(
