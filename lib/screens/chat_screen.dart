@@ -70,6 +70,7 @@ class _ChatScreenState extends State<ChatScreen> {
           final messageText = message.data['message'].toString();
           final messageSender = message.data['from'].toString();
           final Timestamp messageTime = message.data['data'];
+          final bool isNew = message.data['isnew'];
 
           if (messageSender != selectedUser.uidCurrent) {
             mainAxis = MainAxisAlignment.start;
@@ -127,7 +128,8 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Column(
           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Expanded(
+            Flexible(
+              fit: FlexFit.loose,
               child: getMessages(),
             ),
             Container(
@@ -151,7 +153,8 @@ class _ChatScreenState extends State<ChatScreen> {
                         _fireStore.collection('/rooms/$chatID/messagges').add({
                           'from': selectedUser.uidCurrent,
                           'message': userMessage,
-                          'data': DateTime.now()
+                          'data': DateTime.now(),
+                          'isNew': true
                         });
                         setState(() {
                           _c.clear();
